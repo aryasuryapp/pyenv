@@ -133,19 +133,20 @@ class MainWindow(QtWidgets.QMainWindow):
         print('peaks count =', len(peaks))
 
         true_peaks = []
-        for i in range(0, len(peaks)-1):
-            if peaks[i] > peaks[i+1] and peaks[i] > peaks[i-1]:
+        for i in range(0, len(peaks)):
+            if i == len(peaks)-1:
+                break
+            if peaks[i] > peaks[i+1]:
                 true_peaks.append(peaks[i])
         print('true_peaks count =', len(true_peaks))
         # print(true_peaks)
 
-        # Find R_index
         similarity_list = similarity.tolist()
-
         index_r = []
         for i in range(0, len(true_peaks)-1):
-            index_r.append(similarity_list.index(true_peaks[i]))
-
+            temp = similarity_list.index(true_peaks[i+1]) - similarity_list.index(true_peaks[i])
+            if temp > 10:
+                index_r.append(similarity_list.index(true_peaks[i]))
         print('index_r =', index_r)
 
         # Find RR_interval
