@@ -12,10 +12,28 @@ class MainWindow(QtWidgets.QMainWindow):
         #Load the UI Page
         uic.loadUi("main_file/form.ui", self)
 
-        self.plot([1,2,3,4,5,6,7,8,9,10], [30,32,34,32,33,31,29,32,35,45])
+        self.plot()
 
-    def plot(self, hour, temperature):
-        self.graphWidget.plot(hour, temperature)
+    def plot(self):
+        # read data
+        y = []
+        for line in open('Sinyal ECG_5menit.txt', 'r'):
+            line = line.rstrip("\n")
+            line = int(line)
+            y.append(line)
+        y = y[0:1000]
+        len_y = len(y)
+
+        # build x and y axis
+        x = list(range(1, len_y+1))
+        x_axis = x
+        y_axis = y
+
+        # style
+        # self.graphWidget.setBackground('w')
+        pen = pg.mkPen(color=(255, 0, 0))
+
+        self.graphWidget.plot(x_axis, y_axis, pen=pen)
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
