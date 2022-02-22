@@ -41,8 +41,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # build x and y axis
         seconds = len_y/200
         # print(seconds)
-        x = np.linspace(0, seconds, 1000)
-        # x = list(range(1, len_y+1))
+        x = np.linspace(0, seconds, len_y)
         x_axis = x
         y_axis = y
         return x_axis, y_axis
@@ -146,7 +145,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for i in range(0, len(true_peaks)-1):
             index_r.append(similarity_list.index(true_peaks[i]))
 
-        print('index_r =', index_r)
+        print('index_r =', index_r[0:5])
 
         # Find RR_interval
         RR_interval = []
@@ -155,7 +154,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ms_dist = (temp / 200) * 1000
             RR_interval.append(ms_dist)
             
-        print('RR_interval =', RR_interval, 'in ms')
+        print('RR_interval =', RR_interval[0:5], 'in ms')
 
         return qrs_filter, similarity, index_r, RR_interval
     
@@ -167,7 +166,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for i in range(0, len(rr)):
             temp = 60 * 1000/rr[i]
             mean_hr_list.append(temp)
-        print('mean_hr_list', mean_hr_list)
+        print('mean_hr_list', mean_hr_list[0:5])
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
