@@ -3,6 +3,7 @@ from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
 import sys  # We need sys so that we can pass argv to QApplication
 import os
+import numpy as np
 
 class MainWindow(QtWidgets.QMainWindow):
 
@@ -19,7 +20,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.plot(x, y)
 
         # RR Interval
-        self.RR_interval(y)
+        qrs_filter, similarity = self.RR_interval(y)
+        # print(qrs_filter)
+        self.plot_2(qrs_filter)
+        self.plot_2(similarity)
 
     def read_data(self):
         y = []
@@ -42,8 +46,17 @@ class MainWindow(QtWidgets.QMainWindow):
         pen = pg.mkPen(color=(255, 0, 0))
 
         self.graphWidget.plot(x_axis, y_axis, pen=pen)
+    
+    def plot_2(self, y_axis):
+        x_axis = list(range(1, len(y_axis)+1))
+        
+        # style
+        # self.graphWidget.setBackground('w')
+        pen = pg.mkPen(color=(255, 0, 0))
 
-    def RR_interval(self, data):
+        self.graphWidget_2.plot(x_axis, y_axis, pen=pen)
+
+    def RR_interval2(self, data):
         # Container
         highest_index_array = []
         RR_interval = []
@@ -76,6 +89,40 @@ class MainWindow(QtWidgets.QMainWindow):
         
         print('highest_index_array =', highest_index_array)
         print('RR interval =', RR_interval)
+
+    def RR_interval(self, data):
+        ecg_signal = data
+        # ecg_signal = np.array(data)
+        # indices = np.random.choice(range(len(data)), replace=False, size=500)
+        # ecg_signal = np.array(data)[indices.astype(int)]
+
+        # linear spaced vector between 0.5 pi and 1.5 pi 
+        t = np.linspace(0.5 * np.pi, 1.5 * np.pi, 15)
+
+        # use sine to approximate QRS feature
+        qrs_filter = np.sin(t)
+
+        # stage 1: compute cross correlation between ecg and qrs filter
+        similarity = np.correlate(ecg_signal, qrs_filter, mode="same")
+        # print(similarity)
+
+        # stage 2: find peaks using a threshold
+        threshold = 0.3
+        # peaks = []
+        # for i in range(0, len(similarity)):
+        #     temp = similarity > threshold
+        #     print(temp)
+            # peaks = ecg_signal[].index
+            # print(peaks)
+        # print(peaks)
+
+        # temp = similarity > threshold
+        # # print(temp)
+        # peaks = ecg_signal[temp]
+        # peaks = data.index(peaks)
+        # print(peaks)
+
+        return qrs_filter, similarity
         
 
 def main():
