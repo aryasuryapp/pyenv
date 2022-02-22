@@ -142,7 +142,7 @@ class MainWindow(QtWidgets.QMainWindow):
         similarity_list = similarity.tolist()
 
         index_r = []
-        for i in range(0, len(true_peaks)-1):
+        for i in range(0, len(true_peaks)):
             index_r.append(similarity_list.index(true_peaks[i]))
 
         print('index_r =', index_r[0:5])
