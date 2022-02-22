@@ -20,7 +20,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.plot(x, y)
 
         # RR Interval
-        qrs_filter, similarity = self.RR_interval(y)
+        qrs_filter, similarity, index_r = self.RR_interval(y)
         # print(qrs_filter)
         self.plot_2(qrs_filter)
         self.plot_2(similarity)
@@ -92,9 +92,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def RR_interval(self, data):
         ecg_signal = data
-        # ecg_signal = np.array(data)
-        # indices = np.random.choice(range(len(data)), replace=False, size=500)
-        # ecg_signal = np.array(data)[indices.astype(int)]
 
         # linear spaced vector between 0.5 pi and 1.5 pi 
         t = np.linspace(0.5 * np.pi, 1.5 * np.pi, 15)
@@ -104,25 +101,48 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # stage 1: compute cross correlation between ecg and qrs filter
         similarity = np.correlate(ecg_signal, qrs_filter, mode="same")
-        # print(similarity)
 
         # stage 2: find peaks using a threshold
-        threshold = 0.3
-        # peaks = []
-        # for i in range(0, len(similarity)):
-        #     temp = similarity > threshold
-        #     print(temp)
-            # peaks = ecg_signal[].index
-            # print(peaks)
-        # print(peaks)
+        peaks = []
 
-        # temp = similarity > threshold
-        # # print(temp)
-        # peaks = ecg_signal[temp]
-        # peaks = data.index(peaks)
-        # print(peaks)
+        threshold = max(similarity[0:900])*np.sqrt(2)/2
+        # spk = 0.13 * max(similarity[0:200]) * 0.2
+        # npk = 0.1 * spk
+        # threshold = 0.25 * spk + 0.75 * npk
 
-        return qrs_filter, similarity
+        for i in range(0, len(similarity)):
+            if similarity[i] > threshold:
+                peaks.append(similarity[i])
+
+        # threshold = max(ecg_signal)*np.sqrt(2)/2
+        # spk = 0.13 * max(ecg_signal) * 0.2
+        # npk = 0.1 * spk
+        # threshold = 0.25 * spk + 0.75 * npk
+        # for i in range(0, len(ecg_signal)):
+        #     if ecg_signal[i] > threshold:
+        #         peaks.append(ecg_signal[i])
+
+        print('threshold =', threshold)
+        print('peaks count =', len(peaks))
+
+        true_peaks = []
+        for i in range(0, len(peaks)):
+            if i == len(peaks)-1:
+                break
+            if peaks[i] > peaks[i+1]:
+                true_peaks.append(peaks[i])
+        print('true_peaks count =', len(true_peaks))
+        # print(true_peaks)
+
+        similarity_list = similarity.tolist()
+        index_r = []
+        for i in range(0, len(true_peaks)-1):
+            temp = similarity_list.index(true_peaks[i+1]) - similarity_list.index(true_peaks[i])
+            if temp > 10:
+                index_r.append(similarity_list.index(true_peaks[i]))
+        print('index_r =', index_r)
+
+        return qrs_filter, similarity, index_r
         
 
 def main():
