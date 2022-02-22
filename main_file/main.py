@@ -20,7 +20,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.plot(x, y)
 
         # RR Interval
-        qrs_filter, similarity, index_r = self.RR_interval(y)
+        qrs_filter, similarity, index_r, r_interval = self.RR_interval(y)
         # print(qrs_filter)
         self.plot_2(qrs_filter)
         self.plot_2(similarity)
@@ -31,6 +31,7 @@ class MainWindow(QtWidgets.QMainWindow):
             line = line.rstrip("\n")
             line = int(line)
             y.append(line)
+        print('real_data_count =', len(y))
         y = y[0:1000]
         len_y = len(y)
 
@@ -142,7 +143,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 index_r.append(similarity_list.index(true_peaks[i]))
         print('index_r =', index_r)
 
-        return qrs_filter, similarity, index_r
+        # Find RR_interval
+        RR_interval = []
+        for i in range(0, len(index_r)-1):
+            temp = index_r[i+1] - index_r[i]
+            RR_interval.append(temp)
+        print('RR_interval =', RR_interval)
+
+        return qrs_filter, similarity, index_r, RR_interval
         
 
 def main():
