@@ -25,6 +25,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.plot_2(qrs_filter)
         self.plot_2(similarity)
 
+        # HR
+        self.hr(r_interval)
+
     def read_data(self):
         y = []
         for line in open('Sinyal ECG_5menit.txt', 'r'):
@@ -36,7 +39,10 @@ class MainWindow(QtWidgets.QMainWindow):
         len_y = len(y)
 
         # build x and y axis
-        x = list(range(1, len_y+1))
+        seconds = len_y/200
+        # print(seconds)
+        x = np.linspace(0, seconds, 1000)
+        # x = list(range(1, len_y+1))
         x_axis = x
         y_axis = y
         return x_axis, y_axis
@@ -147,11 +153,22 @@ class MainWindow(QtWidgets.QMainWindow):
         RR_interval = []
         for i in range(0, len(index_r)-1):
             temp = index_r[i+1] - index_r[i]
-            RR_interval.append(temp)
-        print('RR_interval =', RR_interval)
+            ms_dist = (temp / 200) * 1000
+            RR_interval.append(ms_dist)
+            
+        print('RR_interval =', RR_interval, 'in ms')
 
         return qrs_filter, similarity, index_r, RR_interval
-        
+    
+    def hr(self, rr):
+        mean_hr = 60 * 1000/np.mean(rr)
+        print('mean_hr =', mean_hr)
+
+        mean_hr_list = []
+        for i in range(0, len(rr)):
+            temp = 60 * 1000/rr[i]
+            mean_hr_list.append(temp)
+        print('mean_hr_list', mean_hr_list)
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
