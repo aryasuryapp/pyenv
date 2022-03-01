@@ -29,6 +29,10 @@ class MainWindow(QtWidgets.QMainWindow):
         # HR
         self.hr(r_interval)
 
+        # RMSSD, SDNN
+        self.RMSSD(r_interval)
+        self.SDNN(r_interval)
+
     def read_data(self):
         y = []
         for line in open('Sinyal ECG_5menit.txt', 'r'):
@@ -169,6 +173,14 @@ class MainWindow(QtWidgets.QMainWindow):
             temp = 60 * 1000/rr[i]
             mean_hr_list.append(temp)
         print('mean_hr_list', mean_hr_list[0:5])
+
+    def RMSSD(self, rr):
+        rmssd = np.sqrt(np.mean(np.square(np.diff(rr))))
+        print('RMSSD =', rmssd, 'ms')
+
+    def SDNN(self, rr):
+        sdnn = np.std(rr)
+        print('SDNN =', sdnn, 'ms')
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
