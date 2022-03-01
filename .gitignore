@@ -4,3 +4,4 @@
 /lib
 pyvenv.cfg
 /main_file/__pycache__
+/share

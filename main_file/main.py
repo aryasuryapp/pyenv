@@ -4,6 +4,7 @@ import pyqtgraph as pg
 import sys  # We need sys so that we can pass argv to QApplication
 import os
 import numpy as np
+import pdb # For debugging
 
 class MainWindow(QtWidgets.QMainWindow):
 
@@ -155,6 +156,7 @@ class MainWindow(QtWidgets.QMainWindow):
             RR_interval.append(ms_dist)
             
         print('RR_interval =', RR_interval[0:5], 'in ms')
+        # pdb.set_trace()
 
         return qrs_filter, similarity, index_r, RR_interval
     
