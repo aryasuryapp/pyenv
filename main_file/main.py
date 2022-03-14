@@ -7,6 +7,9 @@ import numpy as np
 import pdb # For debugging
 import math
 
+# importing Qt widgets
+from PyQt5.QtWidgets import *
+
 class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(self, *args, **kwargs):
@@ -40,6 +43,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         #HRV tachogram
         self.plot_3(mean_hr_list)
+
+        # Histogram
+        histo = self.histo(r_interval)
+        self.plot_4(histo)
 
     def read_data(self):
         y = []
@@ -83,6 +90,62 @@ class MainWindow(QtWidgets.QMainWindow):
         pen = pg.mkPen(color=(255, 0, 0))
 
         self.graphWidget_3.plot(x_axis, y_axis, pen=pen)
+
+    def plot_4(self, histo):
+        # creating a widget object
+        widget = QtWidgets.QWidget()
+ 
+        # # creating a push button object
+        # btn = QPushButton('Push Button')
+ 
+        # # creating a line edit widget
+        # text = QLineEdit("Line Edit")
+ 
+        # # creating a check box widget
+        # check = QCheckBox("Check Box")
+ 
+        # creating a plot window
+        plot = pg.plot()
+ 
+        # create list for y-axis
+        # y1 = [5, 5, 7, 10, 3, 8, 9, 1, 6, 2]
+        y1 = list(histo.values())
+ 
+        # create horizontal list i.e x-axis
+        # x = [*histo]
+        x = list(histo.keys())
+        # x = [1, 2, 3, 4, 6, 5, 7, 8, 9, 10]
+ 
+        # create pyqt5graph bar graph item
+        # with width = 0.6
+        # with bar colors = green
+        bargraph = pg.BarGraphItem(x = x, height = y1, width = 2, brush ='g')
+ 
+        # add item to plot window
+        # adding bargraph item to the plot window
+        plot.addItem(bargraph)
+ 
+        # Creating a grid layout
+        layout = QGridLayout()
+ 
+        # setting this layout to the widget
+        widget.setLayout(layout)
+ 
+        # adding widgets in the layout in their proper positions
+        # # button goes in upper-left
+        # layout.addWidget(btn, 0, 0)
+ 
+        # # text edit goes in middle-left
+        # layout.addWidget(text, 1, 0)
+ 
+        # # check box widget goes in bottom-left
+        # layout.addWidget(check, 3, 0)
+ 
+        # plot window goes on right side, spanning 3 rows
+        layout.addWidget(plot, 0, 1, 3, 1)
+ 
+        # setting this widget as central widget of the main window
+        self.setCentralWidget(widget)
 
     def RR_interval2(self, data):
         # Container
@@ -225,6 +288,13 @@ class MainWindow(QtWidgets.QMainWindow):
             cnt += 1
         
         return RR_diff
+
+    def histo(self, rr):
+        hist = {}
+        for i in rr:
+            hist[i] = hist.get(i, 0) + 1
+        
+        return hist
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
