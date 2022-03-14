@@ -5,6 +5,7 @@ import sys  # We need sys so that we can pass argv to QApplication
 import os
 import numpy as np
 import pdb # For debugging
+import math
 
 class MainWindow(QtWidgets.QMainWindow):
 
@@ -33,6 +34,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.RMSSD(r_interval)
         self.SDNN(r_interval)
 
+        RR_diff = self.RR_diff(r_interval)
+        self.SDSD(RR_diff)
+        self.pNN50(RR_diff)
+
     def read_data(self):
         y = []
         for line in open('Sinyal ECG_5menit.txt', 'r'):
@@ -40,7 +45,7 @@ class MainWindow(QtWidgets.QMainWindow):
             line = int(line)
             y.append(line)
         print('real_data_count =', len(y))
-        y = y[0:1000]
+        # y = y[0:1000] # Cut data on 1000
         len_y = len(y)
 
         # build x and y axis
@@ -181,6 +186,31 @@ class MainWindow(QtWidgets.QMainWindow):
     def SDNN(self, rr):
         sdnn = np.std(rr)
         print('SDNN =', sdnn, 'ms')
+
+    def SDSD(self, rr):
+        sdsd = np.std(rr)
+        print('SDSD =', sdsd)
+
+    def pNN50(self, rr):
+        RR_diff = rr
+        # pdb.set_trace()
+        nn50 = [x for x in RR_diff if (x>50)]
+        pnn50 = float(len(nn50)) / float(len(RR_diff)) #Note the use of float(), because we don't want Python to think we want an int() and round the proportion to 0 or 1
+        print("pNN50:", pnn50)
+
+    def RR_diff(self, rr):
+        RR_diff = []
+        RR_sqdiff = []
+        RR_list = rr
+        # RR_list = measures['RR_list']
+        cnt = 1 #Use counter to iterate over RR_list
+
+        while (cnt < (len(RR_list)-1)): #Keep going as long as there are R-R intervals
+            RR_diff.append(abs(RR_list[cnt] - RR_list[cnt+1])) #Calculate absolute difference between successive R-R interval
+            RR_sqdiff.append(math.pow(RR_list[cnt] - RR_list[cnt+1], 2)) #Calculate squared difference
+            cnt += 1
+        
+        return RR_diff
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
