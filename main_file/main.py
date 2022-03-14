@@ -28,7 +28,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.plot_2(similarity)
 
         # HR
-        self.hr(r_interval)
+        mean_hr_list = self.hr(r_interval)
 
         # RMSSD, SDNN
         self.RMSSD(r_interval)
@@ -37,6 +37,9 @@ class MainWindow(QtWidgets.QMainWindow):
         RR_diff = self.RR_diff(r_interval)
         self.SDSD(RR_diff)
         self.pNN50(RR_diff)
+
+        #HRV tachogram
+        self.plot_3(mean_hr_list)
 
     def read_data(self):
         y = []
@@ -71,6 +74,15 @@ class MainWindow(QtWidgets.QMainWindow):
         pen = pg.mkPen(color=(255, 0, 0))
 
         self.graphWidget_2.plot(x_axis, y_axis, pen=pen)
+
+    def plot_3(self, y_axis):
+        x_axis = list(range(1, len(y_axis)+1))
+        
+        # style
+        # self.graphWidget.setBackground('w')
+        pen = pg.mkPen(color=(255, 0, 0))
+
+        self.graphWidget_3.plot(x_axis, y_axis, pen=pen)
 
     def RR_interval2(self, data):
         # Container
@@ -178,6 +190,8 @@ class MainWindow(QtWidgets.QMainWindow):
             temp = 60 * 1000/rr[i]
             mean_hr_list.append(temp)
         print('mean_hr_list', mean_hr_list[0:5])
+
+        return mean_hr_list
 
     def RMSSD(self, rr):
         rmssd = np.sqrt(np.mean(np.square(np.diff(rr))))

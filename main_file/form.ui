@@ -47,6 +47,16 @@
      </rect>
     </property>
    </widget>
+   <widget class="PlotWidget" name="graphWidget_3" native="true">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>320</y>
+      <width>331</width>
+      <height>211</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
